@@ -11,7 +11,7 @@ import candlestick
 ### There is two function in this program:
 
 - #### create_color_config():
-    This function allow you to create your custom candlestick
+    This function allow you to create your custom candlestick.
     There are multiples arguments on this function 
     * name (*required*): *str*: The name of your candlestick style
     * red: *str*: the color of the candle when it decreases (hexadecimal color RGBA or RGB as str)
@@ -27,7 +27,7 @@ import candlestick
     * wick_width: *float*: the with of the wick
 
 - #### plot_candle():
-    This function get you Matplotlib plot and add all candles 
+    This function get you Matplotlib plot and add all candles.
     There are multiples arguments on this function
     * ax (*required*):  Your matplotlib ax
     * stock_data (*required*): *np.array*: an array of shape (n, 4) or (n, 5)
