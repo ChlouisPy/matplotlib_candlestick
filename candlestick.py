@@ -299,17 +299,3 @@ def plot_candle(
             )
 
     return ax
-
-
-if __name__ == "__main__":
-    fig, axs = plt.subplots()
-
-    ax = plot_candle(
-        axs,
-        np.array([
-            [10, 15, 9, 11],
-            [9, 15, 8, 8]
-        ])
-    )
-
-    plt.show()
