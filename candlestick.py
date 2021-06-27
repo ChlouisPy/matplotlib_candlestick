@@ -222,14 +222,14 @@ def plot_candle(
         candle_config = CANDLE_CONFIG[config_name]
 
     if axis == 0:
+        R = range(len(stock_data))
+
         if len(stock_data[0]) == 4:
             # mode without index
-            R = range(len(stock_data))
             P = 0
 
         else:
             # mode with index
-            R = np.array(stock_data[:, 0], dtype=int).tolist()
             P = 1
 
             # first plot a invisible line to force plot size
@@ -241,14 +241,14 @@ def plot_candle(
             )
 
     else:
+        R = range(len(stock_data[0]))
+
         if len(stock_data) == 4:
             # mode without index
-            R = range(len(stock_data[0]))
             P = 0
 
         else:
             # mode with index
-            R = np.array(stock_data[0, :], dtype=int).tolist()
             P = 1
 
         # first plot a invisible line to force plot size
@@ -260,7 +260,7 @@ def plot_candle(
         )
 
     # for each lines in stock data
-    for i in R:
+    for i in range(len(stock_data[0])):
 
         # get every data
         if axis == 0:
@@ -268,11 +268,24 @@ def plot_candle(
             high = stock_data[i][1 + P]
             low = stock_data[i][2 + P]
             close = stock_data[i][3 + P]
+
+            # coordinate where to plot the candle
+            if P == 1:
+                x_c = stock_data[i][0]
+            else:
+                x_c = i
+
         else:
             _open = stock_data[0 + P][i]
             high = stock_data[1 + P][i]
             low = stock_data[2 + P][i]
             close = stock_data[3 + P][i]
+
+            # coordinate where to plot
+            if P == 1:
+                x_c = stock_data[0][i]
+            else:
+                x_c = i
 
         # if the stock increase
         if _open <= close:
@@ -280,7 +293,7 @@ def plot_candle(
             # plot wick on bottom of the candle
             ax.add_patch(
                 Rectangle(
-                    (i - candle_config["wick_w"], low),  # set coordinate of the lowest point
+                    (x_c - candle_config["wick_w"], low),  # set coordinate of the lowest point
                     candle_config["wick_w"] * 2,  # set the full width of the wick
                     _open - low,  # set the highest point
                     color=candle_config["wick_i"],
@@ -291,7 +304,7 @@ def plot_candle(
             # plot wick on top of the candle
             ax.add_patch(
                 Rectangle(
-                    (i - candle_config["wick_w"], close),  # set coordinate of the lowest point
+                    (x_c - candle_config["wick_w"], close),  # set coordinate of the lowest point
                     candle_config["wick_w"] * 2,  # set the full width of the wick
                     high - close,  # set the highest point
                     color=candle_config["wick_i"],
@@ -302,7 +315,7 @@ def plot_candle(
             # plot color
             ax.add_patch(
                 Rectangle(
-                    (i - candle_config["candle_w"] / 2, _open),  # set starting point
+                    (x_c - candle_config["candle_w"] / 2, _open),  # set starting point
                     candle_config["candle_w"],
                     close - _open,
                     color=candle_config["green"],
@@ -318,7 +331,7 @@ def plot_candle(
             # plot wick on bottom of the candle
             ax.add_patch(
                 Rectangle(
-                    (i - candle_config["wick_w"], low),  # set coordinate of the lowest point
+                    (x_c - candle_config["wick_w"], low),  # set coordinate of the lowest point
                     candle_config["wick_w"] * 2,  # set the full width of the wick
                     close - low,  # set the highest point
                     color=candle_config["wick_d"],
@@ -329,7 +342,7 @@ def plot_candle(
             # plot wick on top of the candle
             ax.add_patch(
                 Rectangle(
-                    (i - candle_config["wick_w"], _open),  # set coordinate of the lowest point
+                    (x_c - candle_config["wick_w"], _open),  # set coordinate of the lowest point
                     candle_config["wick_w"] * 2,  # set the full width of the wick
                     high - _open,  # set the highest point
                     color=candle_config["wick_d"],
@@ -340,7 +353,7 @@ def plot_candle(
             # plot color
             ax.add_patch(
                 Rectangle(
-                    (i - candle_config["candle_w"] / 2, _open),  # set starting point
+                    (x_c - candle_config["candle_w"] / 2, _open),  # set starting point
                     candle_config["candle_w"],
                     close - _open,
                     color=candle_config["red"],
