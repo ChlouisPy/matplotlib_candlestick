@@ -201,25 +201,29 @@ def plot_candle(
     # mode without index
     if len(stock_data[0]) == 4:
         R = range(len(stock_data))
-        # for each lines in stock data
-    else:
-        R = stock_data[:, 0]
+        P = 0
 
+    else:
+        R = np.array(stock_data[:, 0], dtype=int).tolist()
+        P = 1
+
+    # first plot a invisible line to force plot size
+    ax.plot(
+        np.array([0 / PLOT_PADDING_RATE, len(stock_data) * PLOT_PADDING_RATE]),
+        np.array([max(stock_data[:, P:].flatten().tolist()) * PLOT_PADDING_RATE,
+                  min(stock_data[:, P:].flatten().tolist()) / PLOT_PADDING_RATE]),
+        c=TRANSPARENT
+    )
+
+    # for each lines in stock data
     for i in R:
 
         # get every data
-        _open = stock_data[i][0]
-        high = stock_data[i][1]
-        low = stock_data[i][2]
-        close = stock_data[i][3]
+        _open = stock_data[i][0 + P]
+        high = stock_data[i][1 + P]
+        low = stock_data[i][2 + P]
+        close = stock_data[i][3 + P]
 
-        # first plot a invisible line to force plot size
-        ax.plot(
-            np.array([0 / PLOT_PADDING_RATE, len(stock_data) * PLOT_PADDING_RATE]),
-            np.array([max(stock_data.flatten().tolist()) * PLOT_PADDING_RATE,
-                      min(stock_data.flatten().tolist()) / PLOT_PADDING_RATE]),
-            c=TRANSPARENT
-        )
 
         # if the stock increase
         if _open <= close:
