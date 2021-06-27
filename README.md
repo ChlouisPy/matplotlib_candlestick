@@ -30,12 +30,15 @@ import candlestick
     This function get you Matplotlib plot and add all candles.
     There are multiples arguments on this function
     * ax (*required*):  Your matplotlib ax
-    * stock_data (*required*): *np.array*: an array of shape (n, 4) or (n, 5)
+    * stock_data (*required*): *np.array*: an array of shape (n, 4) or (n, 5) for axis=0 and (4, n) or (5, n) for axis=1
     * config_name: str: the name of the candlestick style
+    * axis: int: the type on array you use 1 or 0 (base is 0)
     
 - ### How to use plot_candle()
 
-    This function has to input possibles for *stock_data*:
+    This function has two input possibles for *stock_data* and to type on axis:
+    
+    #### axis=0
     
     - Input of shape (n, 4):
         ```python
@@ -65,6 +68,25 @@ import candlestick
       <br>
       <br>
       
+      #### axis=1
+      ```python
+      stock_data = np.array([
+                              [open0, open1, open2, ... openX],
+                              [high0, high1, high2, ... highX],
+                              [low0, low1, low2, ... lowX],
+                              [close0, close1, close2, ... closeX],
+                              [0, 1, 2, ... X],
+                            ])
+        ```
+        or
+        ```python
+        stock_data = np.array([
+                              [open0, open1, open2, ... openX],
+                              [high0, high1, high2, ... highX],
+                              [low0, low1, low2, ... lowX],
+                              [close0, close1, close2, ... closeX],
+                            ])
+        ```
 - ### Style already in candlestick.py:
     
 - #### base
