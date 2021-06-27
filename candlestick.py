@@ -148,7 +148,8 @@ def create_color_config(
 def plot_candle(
         ax,
         stock_data: np.array,
-        config_name: str = "base"):
+        config_name: str = "base",
+        axis=0):
     """
     This function will plot all candles from the numpy array
 
@@ -156,6 +157,8 @@ def plot_candle(
     There is two way to create the stock_data array:
      - the first way is only with important data like, open ; high ; low ; close. If you do that the array should
        look's like :
+
+        ########## axis=0 ##########
 
        stock_data = np.array([
                               [open0, high0, low0, close0],
@@ -178,6 +181,25 @@ def plot_candle(
                             ])
        with this method the vale in the first index of a raw correspond to the horizontal axis value on the plot
 
+       ########## axis=1 ##########
+
+       stock_data = np.array([
+                              [open0, open1, open2, ... openX],
+                              [high0, high1, high2, ... highX],
+                              [low0, low1, low2, ... lowX],
+                              [close0, close1, close2, ... closeX],
+                              [0, 1, 2, ... X],
+                            ])
+
+        or
+
+        stock_data = np.array([
+                              [open0, open1, open2, ... openX],
+                              [high0, high1, high2, ... highX],
+                              [low0, low1, low2, ... lowX],
+                              [close0, close1, close2, ... closeX],
+                            ])
+
     Warning : for X value in second type of array, you should use int > 1 between two value, because your candle can
               collide, if you want use smallest value between two candle you should crete your own CANDLE_CONFIG with
               the create_color_config() function and change the border_width, candle_width and wick_width parameter
@@ -185,6 +207,7 @@ def plot_candle(
     :param ax: a matplotlib ax where you want plot yours candles
     :param stock_data: np.array of shape (n, 4) or (n, 5) with float or int
     :param config_name: the name of the graphical configuration for the plotting
+    :param axis: how your data are organised
     :return: None
     """
 
@@ -198,32 +221,58 @@ def plot_candle(
     else:
         candle_config = CANDLE_CONFIG[config_name]
 
-    # mode without index
-    if len(stock_data[0]) == 4:
-        R = range(len(stock_data))
-        P = 0
+    if axis == 0:
+        if len(stock_data[0]) == 4:
+            # mode without index
+            R = range(len(stock_data))
+            P = 0
+
+        else:
+            # mode with index
+            R = np.array(stock_data[:, 0], dtype=int).tolist()
+            P = 1
+
+            # first plot a invisible line to force plot size
+            ax.plot(
+                np.array([0 / PLOT_PADDING_RATE, len(stock_data) * PLOT_PADDING_RATE]),
+                np.array([max(stock_data[:, P:].flatten().tolist()) * PLOT_PADDING_RATE,
+                          min(stock_data[:, P:].flatten().tolist()) / PLOT_PADDING_RATE]),
+                c=TRANSPARENT
+            )
 
     else:
-        R = np.array(stock_data[:, 0], dtype=int).tolist()
-        P = 1
+        if len(stock_data) == 4:
+            # mode without index
+            R = range(len(stock_data[0]))
+            P = 0
 
-    # first plot a invisible line to force plot size
-    ax.plot(
-        np.array([0 / PLOT_PADDING_RATE, len(stock_data) * PLOT_PADDING_RATE]),
-        np.array([max(stock_data[:, P:].flatten().tolist()) * PLOT_PADDING_RATE,
-                  min(stock_data[:, P:].flatten().tolist()) / PLOT_PADDING_RATE]),
-        c=TRANSPARENT
-    )
+        else:
+            # mode with index
+            R = np.array(stock_data[0, :], dtype=int).tolist()
+            P = 1
+
+        # first plot a invisible line to force plot size
+        ax.plot(
+            np.array([0 / PLOT_PADDING_RATE, len(stock_data) * PLOT_PADDING_RATE]),
+            np.array([max(stock_data[P:, :].flatten().tolist()) * PLOT_PADDING_RATE,
+                      min(stock_data[P:, :].flatten().tolist()) / PLOT_PADDING_RATE]),
+            c=TRANSPARENT
+        )
 
     # for each lines in stock data
     for i in R:
 
         # get every data
-        _open = stock_data[i][0 + P]
-        high = stock_data[i][1 + P]
-        low = stock_data[i][2 + P]
-        close = stock_data[i][3 + P]
-
+        if axis == 0:
+            _open = stock_data[i][0 + P]
+            high = stock_data[i][1 + P]
+            low = stock_data[i][2 + P]
+            close = stock_data[i][3 + P]
+        else:
+            _open = stock_data[0 + P][i]
+            high = stock_data[1 + P][i]
+            low = stock_data[2 + P][i]
+            close = stock_data[3 + P][i]
 
         # if the stock increase
         if _open <= close:
